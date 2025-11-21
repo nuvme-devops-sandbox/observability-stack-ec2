@@ -25,9 +25,10 @@ No grafana você vai precisar ajustar o webhook de alertas e também a url do gr
 
 4- Na seção de dashboards, o ajuste é o seguinte: Se o cliente tiver containers, usar os arquivos `ec2_loki_containers_v1.json e ec2_prometheus_host_with_containers_v1.json`, se não usar os outros dois, após a desição deletar os arquivos que não vão ser usados!
 
-5- Uma role assumida pela EC2 de observability com as seguintes policies: 
+5- Uma role assumida pela EC2 de observability com as seguintes policies:
 
-```AmazonEC2ReadOnlyAccess
+```
+AmazonEC2ReadOnlyAccess
 AmazonGrafanaCloudWatchAccess
 
 s3-loki
@@ -46,11 +47,13 @@ s3-loki
             ]
         }
     ]
-}```
+}
+```
 
 6- loki-s3 bucket permission
 
-```{
+```
+{
     "Version": "2012-10-17",
     "Id": "SSLPolicy",
     "Statement": [
@@ -70,7 +73,8 @@ s3-loki
             }
         }
     ]
-}```
+}
+```
 
 7- Ajustar a configuração do `loki-config.yaml` com o bucket-name e region do cliente
 
