@@ -1,0 +1,59 @@
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:12.0.0
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    env_file:
+      - .env
+    ### Habilite caso tenha ativado o prometheus ou o loki
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      observability:
+### Metrics
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    networks:
+      observability:
+### Logs
+  loki:
+    container_name: loki
+    # AMD and ARM
+    image: grafana/loki:3.5.5-arm64 # image: grafana/loki:3.5.5
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3100:3100
+    command: ["-config.file=/etc/loki/loki-config.yaml"]
+    volumes:
+      - loki-data:/loki
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml
+    networks:
+      observability:
+
+volumes:
+  grafana-data:
+  loki-data:
+  prometheus-data:
+
+networks:
+  observability:
+    driver: bridge

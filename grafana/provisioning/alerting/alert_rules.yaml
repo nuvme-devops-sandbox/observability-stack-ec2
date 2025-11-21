@@ -1,0 +1,414 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: EG_DEFAULT
+      folder: Observability
+      interval: 1m
+      rules:
+        - uid: slack_memory_ec2
+          title: Alerta - Memória EC2 3min 90%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: (1 - (node_memory_MemAvailable_bytes{ec2_name!=""} / node_memory_MemTotal_bytes{ec2_name!=""})) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 90
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: slack_memory_ec2
+            repeat_interval: 1d
+        - uid: slack_cpu_ec2
+          title: Alerta - CPU EC2 3min 90%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: 100 * (1 - avg by (ec2_name)(rate(node_cpu_seconds_total{mode="idle", ec2_name!=""}[$__rate_interval])))
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 90
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: slack_cpu_ec2
+            repeat_interval: 1d
+        - uid: slack_uptime_ec2
+          title: Alerta - UPTIME EC2 3min
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus
+              model:
+                datasource:
+                    type: prometheus
+                    uid: prometheus
+                editorMode: code
+                expr: up{ec2_name!="", job="node_exporter"}
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: slack_uptime_ec2
+            repeat_interval: 1d
+        - uid: slack_credits_ec2
+          title: Alerta - creditos de cpu zerados
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: cloudwatch
+              model:
+                datasource:
+                    type: cloudwatch
+                    uid: cloudwatch
+                dimensions:
+                    InstanceId: '*'
+                expression: ""
+                hide: false
+                id: ""
+                instant: true
+                intervalMs: 1000
+                label: ""
+                logGroups: []
+                matchExact: true
+                maxDataPoints: 43200
+                metricEditorMode: 0
+                metricName: CPUCreditBalance
+                metricQueryType: 0
+                namespace: AWS/EC2
+                period: ""
+                queryLanguage: CWLI
+                queryMode: Metrics
+                refId: A
+                region: default
+                sqlExpression: ""
+                statistic: Average
+            - refId: reducer
+              queryType: expression
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: reducer
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: eq
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: reducer
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          isPaused: false
+          notification_settings:
+            receiver: slack_credits_ec2
+            repeat_interval: 1d
+        - uid: slack_time_spentidle_ec2
+          title: Alerta - Time spent idle abaixo de 50%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: cloudwatch
+              model:
+                datasource:
+                    type: cloudwatch
+                    uid: cloudwatch
+                dimensions:
+                    VolumeId: '*'
+                expression: ""
+                hide: false
+                id: ""
+                instant: true
+                intervalMs: 1000
+                label: ""
+                logGroups: []
+                matchExact: true
+                maxDataPoints: 43200
+                metricEditorMode: 0
+                metricName: VolumeIdleTime
+                metricQueryType: 0
+                namespace: AWS/EBS
+                period: 60s
+                queryLanguage: CWLI
+                queryMode: Metrics
+                refId: A
+                region: default
+                sqlExpression: ""
+                statistic: Average
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 30
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: slack_time_spentidle_ec2
+            repeat_interval: 1d
+    - orgId: 1
+      name: EG_EBS
+      folder: Observability
+      interval: 1m
+      rules:
+        - uid: slack_ebs_ec2
+          title: Alerta EBS EC2 5min 90%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: prometheus
+              model:
+                editorMode: code
+                expr: |-
+                    (
+                      (node_filesystem_size_bytes{ec2_name!="", mountpoint="/", fstype!="rootfs"}
+                       - node_filesystem_avail_bytes{ec2_name!="", mountpoint="/", fstype!="rootfs"})
+                      / node_filesystem_size_bytes{ec2_name!="", mountpoint="/", fstype!="rootfs"}
+                    ) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 90
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: OK
+          for: 10m
+          annotations: {}
+          labels: {}
+          isPaused: false
+          notification_settings:
+            receiver: slack_ebs_ec2
+            repeat_interval: 1d

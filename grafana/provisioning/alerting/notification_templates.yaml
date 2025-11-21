@@ -1,0 +1,85 @@
+apiVersion: 1
+
+templates:
+  - orgId: 1
+    name: Title_Channel
+    template: |
+      {{ define "title_channel" }}
+      {{- if eq .Status "firing" -}}
+      <!channel> 🚨 *Alerta Ativado:* {{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}N/A{{ end }}
+      {{- else if eq .Status "resolved" -}}
+      <!channel> ✅ *Alerta Resolvido:* {{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}N/A{{ end }}
+      {{- else -}}
+      <!channel> ❗ *Alerta com Status Desconhecido:* {{ if .CommonLabels.alertname }}{{ .CommonLabels.alertname }}{{ else }}N/A{{ end }}
+      {{- end }}
+      {{ end }}
+  - orgId: 1
+    name: EBS_EC2
+    template: |
+      {{ define "slack_ebs_ec2" }} 
+
+      *Espaço em disco acima de 90% na instância:*
+
+      {{ range .Alerts }}
+      • *EC2:* `{{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}`
+        👉 <https://xxx/d/ec2_prometheus/ec2_prometheus?orgId=1&from=now-1h&to=now&timezone=browser&var-name={{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}|Dashboard>
+      {{ end }}
+      {{ end }}
+  - orgId: 1
+    name: MEMORY_EC2
+    template: |
+      {{ define "slack_memory_ec2" }} 
+
+      *Memória acima de 90% na instância:*
+
+      {{ range .Alerts }}
+      • *EC2:* `{{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}`
+        👉 <https://xxx/d/ec2_prometheus/ec2_prometheus?orgId=1&from=now-1h&to=now&timezone=browser&var-name={{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}|Dashboard>
+      {{ end }}
+      {{ end }}
+  - orgId: 1
+    name: CPU_EC2
+    template: |
+      {{ define "slack_cpu_ec2" }} 
+
+      *CPU acima de 90% na instância:*
+
+      {{ range .Alerts }}
+      • *EC2:* `{{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}`
+        👉 <https://xxx/d/ec2_prometheus/ec2_prometheus?orgId=1&from=now-1h&to=now&timezone=browser&var-name={{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}|Dashboard>
+      {{ end }}
+      {{ end }}
+  - orgId: 1
+    name: UPTIME_EC2
+    template: |
+      {{ define "slack_uptime_ec2" }} 
+
+      *UPTIME*
+
+      {{ range .Alerts }}
+      • *EC2:* `{{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}`
+        👉 <https://xxx/d/ec2_prometheus/ec2_prometheus?orgId=1&from=now-1h&to=now&timezone=browser&var-name={{ if .Labels.ec2_name }}{{ .Labels.ec2_name }}{{ else }}N/A{{ end }}|Dashboard>
+      {{ end }}
+      {{ end }}
+  - orgId: 1
+    name: TIME_SPENTIDLE_EC2
+    template: |
+      {{ define "slack_time_spentidle_ec2" }} 
+
+      *Time spent idle abaixo de 50%*
+
+      {{ range .Alerts }}
+      • *EBS:* `{{ if .Labels.VolumeId }}{{ .Labels.VolumeId }}{{ else }}N/A{{ end }}`
+      {{ end }}
+      {{ end }}
+  - orgId: 1
+    name: CREDITS_EC2
+    template: |
+      {{ define "slack_credits_ec2" }} 
+
+      *Creditos de cpu zerados*
+
+      {{ range .Alerts }}
+      • *EC2:* `{{ if .Labels.InstanceId }}{{ .Labels.InstanceId }}{{ else }}N/A{{ end }}`
+      {{ end }}
+      {{ end }}

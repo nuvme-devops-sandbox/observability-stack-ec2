@@ -1,0 +1,62 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: slack_ebs_ec2
+      receivers:
+        - uid: slack_ebs_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_ebs_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true
+    - orgId: 1
+      name: slack_memory_ec2
+      receivers:
+        - uid: slack_memory_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_memory_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true
+    - orgId: 1
+      name: slack_cpu_ec2
+      receivers:
+        - uid: slack_cpu_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_cpu_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true
+    - orgId: 1
+      name: slack_uptime_ec2
+      receivers:
+        - uid: slack_uptime_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_uptime_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true
+    - orgId: 1
+      name: slack_time_spentidle_ec2
+      receivers:
+        - uid: slack_time_spentidle_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_time_spentidle_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true
+    - orgId: 1
+      name: slack_credits_ec2
+      receivers:
+        - uid: slack_credits_ec2
+          type: slack
+          settings:
+            text: '{{ template "slack_credits_ec2" . }}'
+            title: '{{ template "title_channel" . }}'
+            url: xxx
+          disableResolveMessage: true

@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # - job_name: 'cadvisor-8080'
+  #   ec2_sd_configs:
+  #     - region: us-east-1
+  #       port: 8080
+  #   relabel_configs:
+  #     - source_labels: [__meta_ec2_tag_prometheus]
+  #       regex: true
+  #       action: keep
+  #     - source_labels: [__meta_ec2_private_dns_name]
+  #       target_label: instance
+  #       action: replace
+  #     - source_labels: [__meta_ec2_tag_Name]
+  #       target_label: ec2_name
+  #       action: replace
+  - job_name: 'node_exporter'
+    scrape_interval: 15s
+    ec2_sd_configs:
+      - region: us-east-1
+        port: 9100
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_prometheus]
+        regex: true
+        action: keep
+      - source_labels: [__meta_ec2_private_dns_name]
+        target_label: instance
+        action: replace
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: ec2_name
+        action: replace

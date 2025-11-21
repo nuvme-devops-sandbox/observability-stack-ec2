@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: "default"
+    orgId: 1
+    folder: "Observability"
+    type: file
+    editable: true
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /etc/grafana/provisioning/dashboards/custom-dashboards
